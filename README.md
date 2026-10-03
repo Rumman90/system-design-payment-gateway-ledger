@@ -79,38 +79,39 @@ Daily Storage = 100,000,000 × 5 KB = 500 GB / day
 
 ```mermaid
 flowchart TD
-    Client["User / Merchant App"] -->|1. POST /v1/payments (Idempotency-Key)| APIGW["API Gateway"]
+    Client["User or Merchant App"] -->|"1. POST /v1/payments with Idempotency Key"| APIGW["API Gateway"]
     
-    APIGW -->|2. Route Request| PaySvc["Payment Service"]
+    APIGW -->|"2. Route Request"| PaySvc["Payment Service"]
     
-    subgraph Fast Deduplication
-        PaySvc -->|Acquire Lock| RedisLock["Redis (Locks & Idempotency Store)"]
+    subgraph FastDeduplication ["Fast Deduplication"]
+        PaySvc -->|"Acquire Lock"| RedisLock["Redis Locks and Idempotency Store"]
     end
     
-    subgraph Transaction Pipeline
-        PaySvc -->|3. Save Initial Status| PayDB[("Payment DB (Postgres / CockroachDB)")]
-        PaySvc -->|4. Forward Card Token| PSPProxy["Card Vault & PSP Proxy"]
-        PSPProxy -->|5. Charge Card| ExtPSP["External Card Network (Visa, Stripe, Adyen)"]
-        ExtPSP -->|6. Return Success / Decline| PSPProxy
-        PSPProxy -->|7. Send Response| PaySvc
+    subgraph TransactionPipeline ["Transaction Pipeline"]
+        PaySvc -->|"3. Save Initial Status"| PayDB[("Payment DB - Postgres or CockroachDB")]
+        PaySvc -->|"4. Forward Card Token"| PSPProxy["Card Vault and PSP Proxy"]
+        PSPProxy -->|"5. Charge Card"| ExtPSP["External Card Network - Visa, Stripe, Adyen"]
+        ExtPSP -->|"6. Return Success or Decline"| PSPProxy
+        PSPProxy -->|"7. Send Response"| PaySvc
     end
     
-    subgraph Event Queue
-        PaySvc -->|8. Push Event| Kafka["Kafka Bus"]
-        Kafka -->|Listen for Success| LedgerWorker["Ledger Service"]
-        Kafka -->|Send Updates| WebhookWorker["Webhook Sender"]
-    end
-
-    subgraph Accounting
-        LedgerWorker -->|9. Post Immutable Entries| LedgerDB[("Double-Entry Ledger DB")]
+    subgraph EventQueue ["Event Queue"]
+        PaySvc -->|"8. Push Event"| Kafka["Kafka Bus"]
+        Kafka -->|"Listen for Success"| LedgerWorker["Ledger Service"]
+        Kafka -->|"Send Updates"| WebhookWorker["Webhook Sender"]
     end
 
-    subgraph Daily Verification
-        BankFile["Daily Bank Settlement Files (CSV / MT940)"] --> RecEngine["Reconciliation Engine"]
+    subgraph Accounting ["Accounting"]
+        LedgerWorker -->|"9. Post Immutable Entries"| LedgerDB[("Double-Entry Ledger DB")]
+    end
+
+    subgraph DailyVerification ["Daily Verification"]
+        BankFile["Daily Bank Settlement Files - CSV or MT940"] --> RecEngine["Reconciliation Engine"]
         LedgerDB --> RecEngine
-        RecEngine -->|Find Mismatches| DisputeQueue["Manual Review Dashboard"]
+        RecEngine -->|"Find Mismatches"| DisputeQueue["Manual Review Dashboard"]
     end
 ```
+
 
 ---
 

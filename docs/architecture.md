@@ -11,17 +11,18 @@ Here is what happens behind the scenes from the moment a user clicks "Pay" to th
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Customer as Customer / Mobile App
+    actor Customer as Customer App
     participant APIGW as API Gateway
     participant PaySvc as Payment Service
-    participant Redis as Redis Lock & Cache
+    participant Redis as Redis Lock and Cache
     participant PayDB as Payment Database
-    participant PSP as External Bank / Visa / Stripe
-    participant Kafka as Message Bus (Kafka)
+    participant PSP as External Bank or Card Network
+    participant Kafka as Message Bus Kafka
     participant Ledger as Ledger Service
-    participant LedgerDB as Ledger DB
+    participant LedgerDB as Ledger Database
     participant Webhook as Webhook Worker
     actor Merchant as Merchant Server
+
 
     Customer->>APIGW: POST /v1/payments/charge (Idempotency-Key, Card Token, $100)
     APIGW->>PaySvc: Validate Auth & Forward Request

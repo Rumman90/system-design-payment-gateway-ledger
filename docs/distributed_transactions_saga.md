@@ -21,17 +21,17 @@ A central payment service coordinates the entire transaction using a clear state
 stateDiagram-v2
     [*] --> StartPayment: Customer clicks Pay
     StartPayment --> CheckFraudRisk: Reserve stock
-    CheckFraudRisk --> RiskApproved: Fraud score < 30
-    CheckFraudRisk --> PaymentRejected: Fraud score >= 30
+    CheckFraudRisk --> RiskApproved: Fraud score under 30
+    CheckFraudRisk --> PaymentRejected: Fraud score 30 or higher
 
     RiskApproved --> ContactBank: Charge card via Visa/Stripe
     
     ContactBank --> CardSuccess: Bank returns 200 OK
     ContactBank --> CardDeclined: Bank returns 402 Declined
-    ContactBank --> BankTimeout: Bank takes > 5s (No response)
+    ContactBank --> BankTimeout: Bank takes longer than 5s
 
     CardSuccess --> RecordInLedger: Emit PaymentFinished event
-    RecordInLedger --> SendReceipt: Send email / webhook
+    RecordInLedger --> SendReceipt: Send email or webhook
     SendReceipt --> [*]
 
     CardDeclined --> ReleaseStock: Cancel stock hold

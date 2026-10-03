@@ -20,13 +20,14 @@ Every night at midnight, our system compares records from three separate places:
 
 ```mermaid
 flowchart LR
-    A["1. Internal Payments DB<br/>(What users ordered)"] <--->|Match Order ID & Amount| B["2. Double-Entry Ledger<br/>(Internal accounting journal)"]
-    B <--->|Match Bank Reference & Cents| C["3. Bank Settlement Files<br/>(CSV / BAI2 / MT940)"]
+    A["1. Internal Payments DB"] <-->|"Match Order ID and Amount"| B["2. Double-Entry Ledger"]
+    B <-->|"Match Bank Reference and Cents"| C["3. Bank Settlement Files"]
 
-    A -. Discrepancy .-> D["Operations Review Queue"]
-    B -. Discrepancy .-> D
-    C -. Discrepancy .-> D
+    A -.->|"Discrepancy"| D["Operations Review Queue"]
+    B -.->|"Discrepancy"| D
+    C -.->|"Discrepancy"| D
 ```
+
 
 ---
 
