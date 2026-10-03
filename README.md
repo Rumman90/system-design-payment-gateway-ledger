@@ -165,7 +165,7 @@ system-design-payment-gateway-ledger/
 │   ├── reconciliation_and_settlement.md # Daily bank matching algorithms
 │   └── failure_scenarios.md          # Handling timeouts, outages, and retries
 └── examples/
-    ├── idempotent_payment_worker.py  # Working Python script demo
+    ├── idempotent_payment_worker.js  # Working JavaScript / Node.js script demo
     ├── double_entry_ledger_demo.sql  # SQL function that prevents unbalanced entries
     └── sample_payment_flow.json      # Sample JSON requests and webhook payloads
 ```
@@ -186,9 +186,10 @@ system-design-payment-gateway-ledger/
 
 ## 8. Code & Examples
 
-* [Idempotent Payment Worker (Python)](examples/idempotent_payment_worker.py)
+* [Idempotent Payment Worker (Node.js)](examples/idempotent_payment_worker.js)
 * [Double-Entry Ledger Posting Function (SQL)](examples/double_entry_ledger_demo.sql)
 * [Sample Payment & Webhook Payloads (JSON)](examples/sample_payment_flow.json)
+
 
 ---
 
